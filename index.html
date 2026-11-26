@@ -41,7 +41,7 @@
             height: 100vh;
             pointer-events: none;
             z-index: 0;
-            background: radial-gradient(circle at 38% 28%, #073275 0%, #031333 50%, #010614 100%);
+            background: radial-gradient(circle at 38% 28%, #2a040e 0%, #100207 52%, #030103 100%);
         }
 
         /* ---------------------------------
@@ -358,11 +358,12 @@
                     const bias = Math.random();
                     this.x = bias < 0.72 ? Math.random() * (bgWidth * 0.65) : Math.random() * bgWidth;
                     this.y = Math.random() * bgHeight;
-                    this.vx = (Math.random() - 0.5) * 0.65;
-                    this.vy = (Math.random() - 0.5) * 0.65;
+                    // Fast hacker network movement
+                    this.vx = (Math.random() - 0.5) * 2.4;
+                    this.vy = (Math.random() - 0.5) * 2.4;
                     this.radius = Math.random() * 2.2 + 1.4;
-                    this.isGold = (this.x < bgWidth * 0.55 && this.y > bgHeight * 0.42 && Math.random() > 0.35);
-                    this.flare = Math.random() > 0.88;
+                    this.isBright = (this.x < bgWidth * 0.55 && this.y > bgHeight * 0.42 && Math.random() > 0.35);
+                    this.flare = Math.random() > 0.86;
                 }
 
                 update() {
@@ -375,17 +376,17 @@
                 draw() {
                     bgCtx.beginPath();
                     bgCtx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-                    bgCtx.fillStyle = this.isGold ? '#ffcf70' : '#7ae2ff';
+                    bgCtx.fillStyle = this.isBright ? '#ff809b' : '#ff1a4b';
                     bgCtx.fill();
 
                     if (this.flare) {
-                        const grad = bgCtx.createRadialGradient(this.x, this.y, 0, this.x, this.y, 22);
+                        const grad = bgCtx.createRadialGradient(this.x, this.y, 0, this.x, this.y, 24);
                         grad.addColorStop(0, 'rgba(255, 255, 255, 1)');
-                        grad.addColorStop(0.25, this.isGold ? 'rgba(255, 175, 55, 0.75)' : 'rgba(0, 210, 255, 0.75)');
+                        grad.addColorStop(0.25, this.isBright ? 'rgba(255, 70, 110, 0.85)' : 'rgba(255, 0, 60, 0.8)');
                         grad.addColorStop(1, 'rgba(0, 0, 0, 0)');
                         bgCtx.fillStyle = grad;
                         bgCtx.beginPath();
-                        bgCtx.arc(this.x, this.y, 22, 0, Math.PI * 2);
+                        bgCtx.arc(this.x, this.y, 24, 0, Math.PI * 2);
                         bgCtx.fill();
                     }
                 }
@@ -396,9 +397,10 @@
                     this.text = text;
                     this.x = Math.max(12, bgWidth * 0.035);
                     this.y = (bgHeight * 0.08) + (index / total) * (bgHeight * 0.84);
-                    this.speed = 0.22;
-                    this.alpha = 0.72;
-                    this.isGold = index > total * 0.48;
+                    // Faster scrolling hacker terminal lines
+                    this.speed = 0.65;
+                    this.alpha = 0.78;
+                    this.isBright = index > total * 0.48;
                 }
 
                 update() {
@@ -410,12 +412,12 @@
 
                 draw() {
                     const fontSize = bgWidth < 500 ? 9 : 12;
-                    bgCtx.font = `bold ${fontSize}px "Courier New", monospace`;
-                    bgCtx.shadowColor = this.isGold ? 'rgba(255, 150, 30, 0.8)' : 'rgba(0, 200, 255, 0.8)';
-                    bgCtx.shadowBlur = 6;
-                    bgCtx.fillStyle = this.isGold
-                        ? `rgba(255, 195, 95, ${this.alpha})`
-                        : `rgba(140, 230, 255, ${this.alpha})`;
+                    bgCtx.font = `bold ${fontSize}px "Share Tech Mono", "Courier New", monospace`;
+                    bgCtx.shadowColor = this.isBright ? 'rgba(255, 40, 85, 0.9)' : 'rgba(0, 255, 120, 0.75)';
+                    bgCtx.shadowBlur = 7;
+                    bgCtx.fillStyle = this.isBright
+                        ? `rgba(255, 95, 130, ${this.alpha})`
+                        : `rgba(80, 255, 155, ${this.alpha * 0.85})`;
                     bgCtx.fillText(this.text, this.x, this.y);
                     bgCtx.shadowBlur = 0;
                 }
@@ -423,7 +425,7 @@
 
             function initBgElements() {
                 bgParticles = [];
-                const particleCount = bgWidth < 600 ? 60 : 95;
+                const particleCount = bgWidth < 600 ? 70 : 110;
                 for (let i = 0; i < particleCount; i++) {
                     bgParticles.push(new BgParticle());
                 }
@@ -433,10 +435,11 @@
                     codeLines.push(new CodeLine(line, idx, bioCodeSnippets.length));
                 });
 
+                // High-speed circuit data pulses
                 circuitPulses = [
-                    { progress: 0, speed: 0.009 },
-                    { progress: 0.35, speed: 0.007 },
-                    { progress: 0.7, speed: 0.01 }
+                    { progress: 0, speed: 0.025 },
+                    { progress: 0.35, speed: 0.022 },
+                    { progress: 0.7, speed: 0.028 }
                 ];
             }
 
@@ -464,14 +467,14 @@
                     for (let i = 1; i < path.length; i++) {
                         bgCtx.lineTo(path[i][0], path[i][1]);
                     }
-                    bgCtx.strokeStyle = 'rgba(255, 160, 60, 0.65)';
+                    bgCtx.strokeStyle = 'rgba(255, 30, 80, 0.7)';
                     bgCtx.lineWidth = isMobile ? 1.5 : 2.2;
                     bgCtx.stroke();
 
                     const lastPt = path[path.length - 1];
                     bgCtx.beginPath();
                     bgCtx.arc(lastPt[0], lastPt[1], isMobile ? 2.5 : 4, 0, Math.PI * 2);
-                    bgCtx.fillStyle = '#ffbe6b';
+                    bgCtx.fillStyle = '#ff4d73';
                     bgCtx.fill();
 
                     const pulse = circuitPulses[idx % circuitPulses.length];
@@ -482,12 +485,12 @@
                         const py = path[segIndex][1] + (path[segIndex + 1][1] - path[segIndex][1]) * segProgress;
 
                         bgCtx.beginPath();
-                        bgCtx.arc(px, py, 3.2, 0, Math.PI * 2);
-                        bgCtx.fillStyle = '#ffffff';
-                        bgCtx.shadowColor = '#ffaa33';
-                        bgCtx.shadowBlur = 12;
+                        bgCtx.arc(px, py, 3.5, 0, Math.PI * 2);
+                                           bgCtx.fillStyle = '#ffffff';
+                        bgCtx.shadowColor = '#ff003c';
+                        bgCtx.shadowBlur = 14;
                         bgCtx.fill();
-                                               bgCtx.shadowBlur = 0;
+                        bgCtx.shadowBlur = 0;
                     }
                 });
 
@@ -496,8 +499,8 @@
                     if (p.progress >= 1) p.progress = 0;
                 });
 
-                bgCtx.fillStyle = 'rgba(6, 15, 34, 0.95)';
-                bgCtx.strokeStyle = 'rgba(145, 205, 255, 0.85)';
+                bgCtx.fillStyle = 'rgba(15, 3, 8, 0.95)';
+                bgCtx.strokeStyle = 'rgba(255, 45, 95, 0.9)';
                 bgCtx.lineWidth = isMobile ? 2 : 3;
                 bgCtx.beginPath();
                 if (bgCtx.roundRect) {
@@ -510,12 +513,12 @@
 
                 const pad = chipSize * 0.2;
                 const innerSize = chipSize - pad * 2;
-                const pulseGlow = 0.72 + Math.sin(time * 0.004) * 0.22;
+                const pulseGlow = 0.72 + Math.sin(time * 0.01) * 0.25;
 
-                bgCtx.fillStyle = `rgba(255, 175, 75, ${pulseGlow})`;
+                bgCtx.fillStyle = `rgba(255, 0, 60, ${pulseGlow})`;
                 bgCtx.fillRect(chipX + pad, chipY + pad, innerSize, innerSize);
 
-                bgCtx.strokeStyle = 'rgba(25, 12, 5, 0.7)';
+                bgCtx.strokeStyle = 'rgba(20, 0, 5, 0.8)';
                 bgCtx.lineWidth = 1.2;
                 const step = innerSize / 6;
                 for (let g = 1; g < 6; g++) {
@@ -534,7 +537,7 @@
             }
 
             function drawConnections() {
-                const maxDist = bgWidth < 600 ? 115 : 175;
+                const maxDist = bgWidth < 600 ? 140 : 210;
 
                 for (let i = 0; i < bgParticles.length; i++) {
                     for (let j = i + 1; j < bgParticles.length; j++) {
@@ -543,18 +546,18 @@
                         const dist = Math.sqrt(dx * dx + dy * dy);
 
                         if (dist < maxDist) {
-                            const opacity = (1 - dist / maxDist) * 0.82;
+                            const opacity = (1 - dist / maxDist) * 0.9;
                             bgCtx.beginPath();
                             bgCtx.moveTo(bgParticles[i].x, bgParticles[i].y);
                             bgCtx.lineTo(bgParticles[j].x, bgParticles[j].y);
 
-                            if (bgParticles[i].isGold || bgParticles[j].isGold) {
-                                bgCtx.strokeStyle = `rgba(255, 185, 80, ${opacity})`;
+                            if (bgParticles[i].isBright || bgParticles[j].isBright) {
+                                bgCtx.strokeStyle = `rgba(255, 90, 125, ${opacity})`;
                             } else {
-                                bgCtx.strokeStyle = `rgba(35, 195, 255, ${opacity})`;
+                                bgCtx.strokeStyle = `rgba(255, 0, 60, ${opacity})`;
                             }
 
-                            bgCtx.lineWidth = 1.15;
+                            bgCtx.lineWidth = 1.25;
                             bgCtx.stroke();
                         }
                     }
@@ -563,12 +566,12 @@
                         const dxm = bgParticles[i].x - bgMouse.x;
                         const dym = bgParticles[i].y - bgMouse.y;
                         const distM = Math.sqrt(dxm * dxm + dym * dym);
-                        if (distM < 180) {
+                        if (distM < 220) {
                             bgCtx.beginPath();
                             bgCtx.moveTo(bgParticles[i].x, bgParticles[i].y);
                             bgCtx.lineTo(bgMouse.x, bgMouse.y);
-                            bgCtx.strokeStyle = `rgba(120, 230, 255, ${(1 - distM / 180) * 0.85})`;
-                            bgCtx.lineWidth = 1.2;
+                            bgCtx.strokeStyle = `rgba(255, 160, 180, ${(1 - distM / 220) * 0.95})`;
+                            bgCtx.lineWidth = 1.4;
                             bgCtx.stroke();
                         }
                     }
@@ -800,4 +803,3 @@
     </script>
 </body>
 </html>
-
