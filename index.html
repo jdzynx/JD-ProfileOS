@@ -1,4 +1,3 @@
-```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -17,7 +16,7 @@
         }
 
         * {
-            cursor: none !important; /* Hide default cursor */
+            cursor: none !important;
             box-sizing: border-box;
         }
 
@@ -30,9 +29,6 @@
             padding: 0;
         }
 
-        /* ---------------------------------
-           CYBERNETIC TECH BACKGROUND CANVAS
-        --------------------------------- */
         #cyber-bg {
             position: fixed;
             top: 0;
@@ -44,9 +40,6 @@
             background: radial-gradient(circle at 38% 28%, #2a040e 0%, #100207 52%, #030103 100%);
         }
 
-        /* ---------------------------------
-           CUSTOM MAIN CURSOR
-        --------------------------------- */
         #main-cursor-dot {
             position: fixed;
             top: 0;
@@ -69,9 +62,6 @@
             box-shadow: 0 0 15px var(--neon-red), 0 0 30px #fff;
         }
 
-        /* ---------------------------------
-           SWARM CURSORS
-        --------------------------------- */
         .swarm-cursor {
             position: fixed;
             top: 0;
@@ -88,9 +78,6 @@
             will-change: transform;
         }
 
-        /* ---------------------------------
-           RIPPLE EFFECT
-        --------------------------------- */
         .ripple {
             position: fixed;
             border-radius: 50%;
@@ -106,9 +93,6 @@
             100% { width: 150px; height: 150px; opacity: 0; border-width: 1px; }
         }
 
-        /* ---------------------------------
-           CANVAS FOR CURSOR TRAILS & PARTICLES
-        --------------------------------- */
         #effects-canvas {
             position: fixed;
             top: 0;
@@ -119,9 +103,6 @@
             z-index: 2;
         }
 
-        /* ---------------------------------
-           UI STYLING (Hacker Profile)
-        --------------------------------- */
         .content-wrapper {
             position: relative;
             z-index: 10;
@@ -146,7 +127,6 @@
             overflow: hidden;
         }
 
-        /* Scanline effect */
         .hacker-card::after {
             content: "";
             position: absolute;
@@ -204,24 +184,14 @@
             box-shadow: 0 0 8px var(--neon-red);
             transform: translateY(-2px);
         }
-
     </style>
 </head>
 <body>
-
-    <!-- Cybernetic Plexus, Bio Code & Microchip Background -->
     <canvas id="cyber-bg"></canvas>
-
-    <!-- Canvas for smooth trailing light and particles -->
     <canvas id="effects-canvas"></canvas>
-
-    <!-- Main Custom Cursor Elements -->
     <div id="main-cursor-dot"></div>
-
-    <!-- Container for Swarm Cursors -->
     <div id="swarm-container"></div>
 
-    <!-- Main Content -->
     <div class="content-wrapper">
         <div class="hacker-card interactive">
             <div class="text-center mb-6">
@@ -269,44 +239,23 @@
                 </div>
             </div>
 
-            <!-- ALL SOCIAL LINKS -->
             <div class="flex flex-wrap gap-4 justify-center mt-8 pt-6 border-t border-red-900 border-opacity-50">
-                <a href="https://github.com/jdzynx" target="_blank" class="glitch-btn interactive">
-                    <i class="fab fa-github mr-2"></i> GitHub.
-                </a>
-                <a href="https://www.linkedin.com/in/shaikh-javeed-337872368?utm_source=share_via&utm_content=profile&utm_medium=member_android" target="_blank" class="glitch-btn interactive">
-                    <i class="fab fa-linkedin mr-2"></i> LinkedIn.  
-                </a>
-                <a href="https://www.instagram.com/jdzynx?gwpx=MWhqYm85MWhwOXJicQ==" target="_blank" class="glitch-btn interactive">
-                    <i class="fab fa-instagram mr-2"></i> Instagram. 
-                </a>
-                <a href="https://x.com/jdzynx" target="_blank" class="glitch-btn interactive">
-                    <i class="fab fa-twitter mr-2"></i> Twitter
-                </a>
+                <a href="https://github.com/jdzynx" target="_blank" class="glitch-btn interactive"><i class="fab fa-github mr-2"></i> GitHub.</a>
+                <a href="https://www.linkedin.com/in/shaikh-javeed-337872368?utm_source=share_via&utm_content=profile&utm_medium=member_android" target="_blank" class="glitch-btn interactive"><i class="fab fa-linkedin mr-2"></i> LinkedIn.</a>
+                <a href="https://www.instagram.com/jdzynx?gwpx=MWhqYm85MWhwOXJicQ==" target="_blank" class="glitch-btn interactive"><i class="fab fa-instagram mr-2"></i> Instagram.</a>
+                <a href="https://x.com/jdzynx" target="_blank" class="glitch-btn interactive"><i class="fab fa-twitter mr-2"></i> Twitter</a>
             </div>
             
-            <!-- Blinking cursor at the bottom -->
-            <div class="mt-6 text-sm text-red-500 animate-pulse">
-                root@jd-universe:~# _
-            </div>
+            <div class="mt-6 text-sm text-red-500 animate-pulse">root@jd-universe:~# _</div>
         </div>
     </div>
-
-    <!-- ==========================================================
-         SCRIPT 1: CYBERNETIC PLEXUS, BIO CODE & MICROCHIP BACKGROUND
-    =========================================================== -->
-    <script>
+        <script>
         (function () {
             const bgCanvas = document.getElementById('cyber-bg');
             const bgCtx = bgCanvas.getContext('2d');
-
-            let bgWidth, bgHeight;
-            let bgParticles = [];
-            let codeLines = [];
-            let circuitPulses = [];
+            let bgWidth, bgHeight, bgParticles = [], codeLines = [], circuitPulses = [];
             let bgMouse = { x: null, y: null };
 
-            // Shaikh Javeed (@JD) ke baare mein moving background lines
             const bioCodeSnippets = [
                 "USER=Shaikh_Javeed  HANDLE=@JD  SYSTEM=ProfileOS",
                 "ROLE: Student & Full-Stack Developer",
@@ -335,50 +284,31 @@
             }
 
             window.addEventListener('resize', resizeBg);
-
-            window.addEventListener('mousemove', (e) => {
-                bgMouse.x = e.clientX;
-                bgMouse.y = e.clientY;
-            });
-
-            window.addEventListener('touchmove', (e) => {
-                if (e.touches && e.touches[0]) {
-                    bgMouse.x = e.touches[0].clientX;
-                    bgMouse.y = e.touches[0].clientY;
-                }
-            }, { passive: true });
-
-            window.addEventListener('mouseout', () => {
-                bgMouse.x = null;
-                bgMouse.y = null;
-            });
+            window.addEventListener('mousemove', (e) => { bgMouse.x = e.clientX; bgMouse.y = e.clientY; });
+            window.addEventListener('touchmove', (e) => { if (e.touches && e.touches[0]) { bgMouse.x = e.touches[0].clientX; bgMouse.y = e.touches[0].clientY; } }, { passive: true });
+            window.addEventListener('mouseout', () => { bgMouse.x = null; bgMouse.y = null; });
 
             class BgParticle {
                 constructor() {
-                    // Poori screen (left, center, right) par barabar aur ghana network
                     this.x = Math.random() * bgWidth;
                     this.y = Math.random() * bgHeight;
-                    // Fast hacker network movement
                     this.vx = (Math.random() - 0.5) * 2.6;
                     this.vy = (Math.random() - 0.5) * 2.6;
                     this.radius = Math.random() * 2.5 + 1.8;
                     this.isBright = Math.random() > 0.4;
                     this.flare = Math.random() > 0.82;
                 }
-
                 update() {
                     this.x += this.vx;
                     this.y += this.vy;
                     if (this.x < -20 || this.x > bgWidth + 20) this.vx *= -1;
                     if (this.y < -20 || this.y > bgHeight + 20) this.vy *= -1;
                 }
-
                 draw() {
                     bgCtx.beginPath();
                     bgCtx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
                     bgCtx.fillStyle = this.isBright ? '#ff99ad' : '#ff1a4b';
                     bgCtx.fill();
-
                     if (this.flare) {
                         const grad = bgCtx.createRadialGradient(this.x, this.y, 0, this.x, this.y, 26);
                         grad.addColorStop(0, 'rgba(255, 255, 255, 1)');
@@ -397,28 +327,20 @@
                     this.text = text;
                     this.x = Math.max(16, bgWidth * 0.03);
                     this.y = (bgHeight * 0.06) + (index / total) * (bgHeight * 0.88);
-                    // Faster scrolling hacker terminal lines
                     this.speed = 0.7;
                     this.alpha = 0.92;
                     this.isBright = index > total * 0.48;
                 }
-
                 update() {
                     this.y -= this.speed;
-                    if (this.y < bgHeight * 0.03) {
-                        this.y = bgHeight * 0.96;
-                    }
+                    if (this.y < bgHeight * 0.03) this.y = bgHeight * 0.96;
                 }
-
                 draw() {
-                    // Desktop mode par bhi bada aur saaf dikhne ke liye responsive font size
                     const fontSize = Math.max(13, Math.min(18, Math.floor(bgWidth * 0.015)));
                     bgCtx.font = `bold ${fontSize}px "Share Tech Mono", "Courier New", monospace`;
                     bgCtx.shadowColor = this.isBright ? 'rgba(255, 40, 85, 0.95)' : 'rgba(0, 255, 120, 0.9)';
                     bgCtx.shadowBlur = 9;
-                    bgCtx.fillStyle = this.isBright
-                        ? `rgba(255, 110, 140, ${this.alpha})`
-                        : `rgba(90, 255, 165, ${this.alpha})`;
+                    bgCtx.fillStyle = this.isBright ? `rgba(255, 110, 140, ${this.alpha})` : `rgba(90, 255, 165, ${this.alpha})`;
                     bgCtx.fillText(this.text, this.x, this.y);
                     bgCtx.shadowBlur = 0;
                 }
@@ -426,23 +348,11 @@
 
             function initBgElements() {
                 bgParticles = [];
-                // Zyada particles taaki desktop mode par poori screen bhari aur connected dikhe
                 const particleCount = bgWidth < 600 ? 85 : 155;
-                for (let i = 0; i < particleCount; i++) {
-                    bgParticles.push(new BgParticle());
-                }
-
+                for (let i = 0; i < particleCount; i++) bgParticles.push(new BgParticle());
                 codeLines = [];
-                bioCodeSnippets.forEach((line, idx) => {
-                    codeLines.push(new CodeLine(line, idx, bioCodeSnippets.length));
-                });
-
-                // High-speed circuit data pulses
-                circuitPulses = [
-                    { progress: 0, speed: 0.025 },
-                    { progress: 0.35, speed: 0.022 },
-                    { progress: 0.7, speed: 0.028 }
-                ];
+                bioCodeSnippets.forEach((line, idx) => codeLines.push(new CodeLine(line, idx, bioCodeSnippets.length)));
+                circuitPulses = [{ progress: 0, speed: 0.025 }, { progress: 0.35, speed: 0.022 }, { progress: 0.7, speed: 0.028 }];
             }
 
             function drawMicrochip(time) {
@@ -451,7 +361,6 @@
                 const chipX = bgWidth - chipSize * 0.78;
                 const chipY = bgHeight * 0.56 - chipSize / 2;
                 const scale = isMobile ? 0.52 : 1;
-
                 bgCtx.save();
 
                 const traces = [
@@ -466,9 +375,7 @@
                 traces.forEach((path, idx) => {
                     bgCtx.beginPath();
                     bgCtx.moveTo(path[0][0], path[0][1]);
-                    for (let i = 1; i < path.length; i++) {
-                        bgCtx.lineTo(path[i][0], path[i][1]);
-                    }
+                    for (let i = 1; i < path.length; i++) bgCtx.lineTo(path[i][0], path[i][1]);
                     bgCtx.strokeStyle = 'rgba(255, 30, 80, 0.7)';
                     bgCtx.lineWidth = isMobile ? 1.5 : 2.2;
                     bgCtx.stroke();
@@ -484,9 +391,7 @@
                     const segProgress = (pulse.progress * (path.length - 1)) % 1;
                     if (path[segIndex + 1]) {
                         const px = path[segIndex][0] + (path[segIndex + 1][0] - path[segIndex][0]) * segProgress;
-                        const py = path[segIndex][1] + (path[segIndex + 1][1] - path[segInde
-                                                        x][1]) * segProgress;
-
+                        const py = path[segIndex][1] + (path[segIndex + 1][1] - path[segIndex][1]) * segProgress;
                         bgCtx.beginPath();
                         bgCtx.arc(px, py, 3.5, 0, Math.PI * 2);
                         bgCtx.fillStyle = '#ffffff';
@@ -497,83 +402,53 @@
                     }
                 });
 
-                circuitPulses.forEach(p => {
-                    p.progress += p.speed;
-                    if (p.progress >= 1) p.progress = 0;
-                });
-
+                circuitPulses.forEach(p => { p.progress += p.speed; if (p.progress >= 1) p.progress = 0; });
                 bgCtx.fillStyle = 'rgba(15, 3, 8, 0.95)';
                 bgCtx.strokeStyle = 'rgba(255, 45, 95, 0.9)';
                 bgCtx.lineWidth = isMobile ? 2 : 3;
                 bgCtx.beginPath();
-                if (bgCtx.roundRect) {
-                    bgCtx.roundRect(chipX, chipY, chipSize, chipSize, 8);
-                } else {
-                    bgCtx.rect(chipX, chipY, chipSize, chipSize);
-                }
+                if (bgCtx.roundRect) bgCtx.roundRect(chipX, chipY, chipSize, chipSize, 8);
+                else bgCtx.rect(chipX, chipY, chipSize, chipSize);
                 bgCtx.fill();
                 bgCtx.stroke();
 
-                const pad = chipSize * 0.2;
-                const innerSize = chipSize - pad * 2;
-                const pulseGlow = 0.72 + Math.sin(time * 0.01) * 0.25;
-
-                bgCtx.fillStyle = `rgba(255, 0, 60, ${pulseGlow})`;
+                const pad = chipSize * 0.2, innerSize = chipSize - pad * 2;
+                bgCtx.fillStyle = `rgba(255, 0, 60, ${0.72 + Math.sin(time * 0.01) * 0.25})`;
                 bgCtx.fillRect(chipX + pad, chipY + pad, innerSize, innerSize);
-
                 bgCtx.strokeStyle = 'rgba(20, 0, 5, 0.8)';
                 bgCtx.lineWidth = 1.2;
                 const step = innerSize / 6;
                 for (let g = 1; g < 6; g++) {
-                    bgCtx.beginPath();
-                    bgCtx.moveTo(chipX + pad + g * step, chipY + pad);
-                    bgCtx.lineTo(chipX + pad + g * step, chipY + pad + innerSize);
-                    bgCtx.stroke();
-
-                    bgCtx.beginPath();
-                    bgCtx.moveTo(chipX + pad, chipY + pad + g * step);
-                    bgCtx.lineTo(chipX + pad + innerSize, chipY + pad + g * step);
-                    bgCtx.stroke();
+                    bgCtx.beginPath(); bgCtx.moveTo(chipX + pad + g * step, chipY + pad); bgCtx.lineTo(chipX + pad + g * step, chipY + pad + innerSize); bgCtx.stroke();
+                    bgCtx.beginPath(); bgCtx.moveTo(chipX + pad, chipY + pad + g * step); bgCtx.lineTo(chipX + pad + innerSize, chipY + pad + g * step); bgCtx.stroke();
                 }
-
                 bgCtx.restore();
             }
 
             function drawConnections() {
                 const maxDist = bgWidth < 600 ? 155 : 245;
-
                 for (let i = 0; i < bgParticles.length; i++) {
                     for (let j = i + 1; j < bgParticles.length; j++) {
-                        const dx = bgParticles[i].x - bgParticles[j].x;
-                        const dy = bgParticles[i].y - bgParticles[j].y;
+                        const dx = bgParticles[i].x - bgParticles[j].x, dy = bgParticles[i].y - bgParticles[j].y;
                         const dist = Math.sqrt(dx * dx + dy * dy);
-
                         if (dist < maxDist) {
                             const opacity = (1 - dist / maxDist) * 0.95;
                             bgCtx.beginPath();
                             bgCtx.moveTo(bgParticles[i].x, bgParticles[i].y);
                             bgCtx.lineTo(bgParticles[j].x, bgParticles[j].y);
-
-                            if (bgParticles[i].isBright || bgParticles[j].isBright) {
-                                bgCtx.strokeStyle = `rgba(255, 115, 145, ${opacity})`;
-                            } else {
-                                bgCtx.strokeStyle = `rgba(255, 15, 70, ${opacity})`;
-                            }
-
+                            bgCtx.strokeStyle = (bgParticles[i].isBright || bgParticles[j].isBright) ? `rgba(255, 115, 145, ${opacity})` : `rgba(255, 15, 70, ${opacity})`;
                             bgCtx.lineWidth = 1.6;
                             bgCtx.stroke();
                         }
                     }
-
                     if (bgMouse.x !== null && bgMouse.y !== null) {
-                        const dxm = bgParticles[i].x - bgMouse.x;
-                        const dym = bgParticles[i].y - bgMouse.y;
+                        const dxm = bgParticles[i].x - bgMouse.x, dym = bgParticles[i].y - bgMouse.y;
                         const distM = Math.sqrt(dxm * dxm + dym * dym);
                         if (distM < 250) {
                             bgCtx.beginPath();
                             bgCtx.moveTo(bgParticles[i].x, bgParticles[i].y);
                             bgCtx.lineTo(bgMouse.x, bgMouse.y);
-                            bgCtx.strokeStyle = `rgba(255, 185, 200, ${(1 - distM / 250) * 1.0})`;
+                            bgCtx.strokeStyle = `rgba(255, 185, 200, ${(1 - distM / 250)})`;
                             bgCtx.lineWidth = 1.8;
                             bgCtx.stroke();
                         }
@@ -583,46 +458,24 @@
 
             function animateBg(time) {
                 bgCtx.clearRect(0, 0, bgWidth, bgHeight);
-
-                codeLines.forEach(line => {
-                    line.update();
-                    line.draw();
-                });
-
+                codeLines.forEach(l => { l.update(); l.draw(); });
                 drawConnections();
-                bgParticles.forEach(p => {
-                    p.update();
-                    p.draw();
-                });
-
+                bgParticles.forEach(p => { p.update(); p.draw(); });
                 drawMicrochip(time);
-
                 requestAnimationFrame(animateBg);
             }
 
             resizeBg();
             requestAnimationFrame(animateBg);
         })();
-    </script>
-
-    <!-- ==========================================================
-         SCRIPT 2: YOUR ORIGINAL SWARM CURSORS, TRAILS & RIPPLES
-    =========================================================== -->
-    <script>
+            </script>    <script>
         const cursorDot = document.getElementById('main-cursor-dot');
         const canvas = document.getElementById('effects-canvas');
         const ctx = canvas.getContext('2d');
         const swarmContainer = document.getElementById('swarm-container');
 
-        let width, height;
-        let mouse = { x: -100, y: -100 };
-
-        const TRAIL_LENGTH = 20;
-        const trailCoords = [];
-        const particles = [];
-        
-        const numSwarm = 30;
-        const swarmData = [];
+        let width, height, mouse = { x: -100, y: -100 };
+        const TRAIL_LENGTH = 20, trailCoords = [], particles = [], numSwarm = 30, swarmData = [];
 
         function resize() {
             width = window.innerWidth;
@@ -633,18 +486,16 @@
         window.addEventListener('resize', resize);
         resize();
 
-        for(let i = 0; i < numSwarm; i++) {
+        for (let i = 0; i < numSwarm; i++) {
             const el = document.createElement('div');
             el.classList.add('swarm-cursor');
             el.style.opacity = Math.random() * 0.6 + 0.4;
             swarmContainer.appendChild(el);
-            
             swarmData.push({
                 element: el,
                 x: window.innerWidth / 2,
                 y: window.innerHeight / 2,
-                vx: 0,
-                vy: 0,
+                vx: 0, vy: 0,
                 spring: 0.01 + (Math.random() * 0.04),
                 friction: 0.70 + (Math.random() * 0.20),
                 offsetX: (Math.random() * 140) - 70,
@@ -652,41 +503,19 @@
             });
         }
 
-        function updateCursorAndTrail(x, y
-                                      ) {
-            mouse.x = x;
-            mouse.y = y;
-
+        function updateCursorAndTrail(x, y) {
+            mouse.x = x; mouse.y = y;
             cursorDot.style.transform = `translate(${mouse.x}px, ${mouse.y}px)`;
-
             trailCoords.push({ x: mouse.x, y: mouse.y });
-            if (trailCoords.length > TRAIL_LENGTH) {
-                trailCoords.shift();
-            }
-
-            if (Math.random() > 0.4) {
-                particles.push(new Particle(mouse.x, mouse.y));
-            }
+            if (trailCoords.length > TRAIL_LENGTH) trailCoords.shift();
+            if (Math.random() > 0.4) particles.push(new Particle(mouse.x, mouse.y));
         }
 
-        window.addEventListener('mousemove', (e) => {
-            updateCursorAndTrail(e.clientX, e.clientY);
-        });
+        window.addEventListener('mousemove', (e) => updateCursorAndTrail(e.clientX, e.clientY));
+        window.addEventListener('touchmove', (e) => { if (e.touches.length > 0) updateCursorAndTrail(e.touches[0].clientX, e.touches[0].clientY); }, { passive: true });
+        window.addEventListener('touchstart', (e) => { if (e.touches.length > 0) updateCursorAndTrail(e.touches[0].clientX, e.touches[0].clientY); }, { passive: true });
 
-        window.addEventListener('touchmove', (e) => {
-            if (e.touches.length > 0) {
-                updateCursorAndTrail(e.touches[0].clientX, e.touches[0].clientY);
-            }
-        }, { passive: true });
-
-        window.addEventListener('touchstart', (e) => {
-            if (e.touches.length > 0) {
-                updateCursorAndTrail(e.touches[0].clientX, e.touches[0].clientY);
-            }
-        }, { passive: true });
-
-        const interactives = document.querySelectorAll('.interactive, a, button, .tag');
-        interactives.forEach(el => {
+        document.querySelectorAll('.interactive, a, button, .tag').forEach(el => {
             el.addEventListener('mouseenter', () => cursorDot.classList.add('hovered'));
             el.addEventListener('mouseleave', () => cursorDot.classList.remove('hovered'));
         });
@@ -697,113 +526,65 @@
             ripple.style.left = `${e.clientX}px`;
             ripple.style.top = `${e.clientY}px`;
             document.body.appendChild(ripple);
-
-            for(let i=0; i<15; i++) {
-                particles.push(new Particle(e.clientX, e.clientY, true));
-            }
-
-            setTimeout(() => {
-                ripple.remove();
-            }, 600);
+            for (let i = 0; i < 15; i++) particles.push(new Particle(e.clientX, e.clientY, true));
+            setTimeout(() => ripple.remove(), 600);
         });
 
         class Particle {
             constructor(x, y, isExplosion = false) {
-                this.x = x;
-                this.y = y;
-                this.size = Math.random() * 2 + 1;
-                
+                this.x = x; this.y = y; this.size = Math.random() * 2 + 1;
                 if (isExplosion) {
-                    const angle = Math.random() * Math.PI * 2;
-                    const speed = Math.random() * 5 + 2;
-                    this.vx = Math.cos(angle) * speed;
-                    this.vy = Math.sin(angle) * speed;
-                    this.life = 1;
-                    this.decay = Math.random() * 0.03 + 0.02;
+                    const angle = Math.random() * Math.PI * 2, speed = Math.random() * 5 + 2;
+                    this.vx = Math.cos(angle) * speed; this.vy = Math.sin(angle) * speed;
+                    this.life = 1; this.decay = Math.random() * 0.03 + 0.02;
                 } else {
-                    this.vx = (Math.random() - 0.5) * 2;
-                    this.vy = (Math.random() - 0.5) * 2 + 1;
-                    this.life = 1;
-                    this.decay = Math.random() * 0.02 + 0.01;
+                    this.vx = (Math.random() - 0.5) * 2; this.vy = (Math.random() - 0.5) * 2 + 1;
+                    this.life = 1; this.decay = Math.random() * 0.02 + 0.01;
                 }
                 this.color = `rgba(255, 0, 60, ${this.life})`;
             }
-            update() {
-                this.x += this.vx;
-                this.y += this.vy;
-                this.life -= this.decay;
-                this.color = `rgba(255, 0, 60, ${this.life})`;
-            }
-            draw(ctx) {
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                ctx.fillStyle = this.color;
-                ctx.fill();
-            }
+            update() { this.x += this.vx; this.y += this.vy; this.life -= this.decay; this.color = `rgba(255, 0, 60, ${this.life})`; }
+            draw(ctx) { ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fillStyle = this.color; ctx.fill(); }
         }
 
         function animate() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-
             if (trailCoords.length > 1) {
                 ctx.beginPath();
                 ctx.moveTo(trailCoords[0].x, trailCoords[0].y);
                 for (let i = 1; i < trailCoords.length; i++) {
-                    const xc = (trailCoords[i].x + trailCoords[i-1].x) / 2;
-                    const yc = (trailCoords[i].y + trailCoords[i-1].y) / 2;
-                    ctx.quadraticCurveTo(trailCoords[i-1].x, trailCoords[i-1].y, xc, yc);
+                    const xc = (trailCoords[i].x + trailCoords[i - 1].x) / 2, yc = (trailCoords[i].y + trailCoords[i - 1].y) / 2;
+                    ctx.quadraticCurveTo(trailCoords[i - 1].x, trailCoords[i - 1].y, xc, yc);
                 }
-                ctx.lineTo(trailCoords[trailCoords.length-1].x, trailCoords[trailCoords.length-1].y);
-                
+                ctx.lineTo(trailCoords[trailCoords.length - 1].x, trailCoords[trailCoords.length - 1].y);
                 ctx.strokeStyle = 'rgba(255, 0, 60, 0.4)';
-                ctx.lineWidth = 4;
-                ctx.lineCap = 'round';
-                ctx.lineJoin = 'round';
-                ctx.shadowBlur = 10;
-                ctx.shadowColor = '#ff003c';
-                ctx.stroke();
-                ctx.shadowBlur = 0;
-                
+                ctx.lineWidth = 4; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+                ctx.shadowBlur = 10; ctx.shadowColor = '#ff003c';
+                ctx.stroke(); ctx.shadowBlur = 0;
                 trailCoords.shift();
             }
 
             for (let i = particles.length - 1; i >= 0; i--) {
                 particles[i].update();
-                if (particles[i].life <= 0) {
-                    particles.splice(i, 1);
-                } else {
-                    particles[i].draw(ctx);
-                }
+                if (particles[i].life <= 0) particles.splice(i, 1);
+                else particles[i].draw(ctx);
             }
 
             const time = Date.now() * 0.002;
-
             swarmData.forEach((s, index) => {
-                let currentOffsetX = s.offsetX + Math.cos(time + index) * 30;
-                let currentOffsetY = s.offsetY + Math.sin(time + index) * 30;
-
-                let targetX = mouse.x + currentOffsetX;
-                let targetY = mouse.y + currentOffsetY;
-
-                let dx = targetX - s.x;
-                let dy = targetY - s.y;
-                
-                s.vx += dx * s.spring;
-                s.vy += dy * s.spring;
-                
-                s.vx *= s.friction;
-                s.vy *= s.friction;
-                
-                s.x += s.vx;
-                s.y += s.vy;
-
+                let targetX = mouse.x + s.offsetX + Math.cos(time + index) * 30;
+                let targetY = mouse.y + s.offsetY + Math.sin(time + index) * 30;
+                s.vx = (s.vx + (targetX - s.x) * s.spring) * s.friction;
+                s.vy = (s.vy + (targetY - s.y) * s.spring) * s.friction;
+                s.x += s.vx; s.y += s.vy;
                 s.element.style.transform = `translate(${s.x}px, ${s.y}px)`;
             });
 
             requestAnimationFrame(animate);
         }
-
         animate();
     </script>
 </body>
 </html>
+
+            
