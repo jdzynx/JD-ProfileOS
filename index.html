@@ -355,38 +355,38 @@
 
             class BgParticle {
                 constructor() {
-                    const bias = Math.random();
-                    this.x = bias < 0.72 ? Math.random() * (bgWidth * 0.65) : Math.random() * bgWidth;
+                    // Poori screen (left, center, right) par barabar aur ghana network
+                    this.x = Math.random() * bgWidth;
                     this.y = Math.random() * bgHeight;
                     // Fast hacker network movement
-                    this.vx = (Math.random() - 0.5) * 2.4;
-                    this.vy = (Math.random() - 0.5) * 2.4;
-                    this.radius = Math.random() * 2.2 + 1.4;
-                    this.isBright = (this.x < bgWidth * 0.55 && this.y > bgHeight * 0.42 && Math.random() > 0.35);
-                    this.flare = Math.random() > 0.86;
+                    this.vx = (Math.random() - 0.5) * 2.6;
+                    this.vy = (Math.random() - 0.5) * 2.6;
+                    this.radius = Math.random() * 2.5 + 1.8;
+                    this.isBright = Math.random() > 0.4;
+                    this.flare = Math.random() > 0.82;
                 }
 
                 update() {
                     this.x += this.vx;
                     this.y += this.vy;
-                    if (this.x < -30 || this.x > bgWidth + 30) this.vx *= -1;
-                    if (this.y < -30 || this.y > bgHeight + 30) this.vy *= -1;
+                    if (this.x < -20 || this.x > bgWidth + 20) this.vx *= -1;
+                    if (this.y < -20 || this.y > bgHeight + 20) this.vy *= -1;
                 }
 
                 draw() {
                     bgCtx.beginPath();
                     bgCtx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-                    bgCtx.fillStyle = this.isBright ? '#ff809b' : '#ff1a4b';
+                    bgCtx.fillStyle = this.isBright ? '#ff99ad' : '#ff1a4b';
                     bgCtx.fill();
 
                     if (this.flare) {
-                        const grad = bgCtx.createRadialGradient(this.x, this.y, 0, this.x, this.y, 24);
+                        const grad = bgCtx.createRadialGradient(this.x, this.y, 0, this.x, this.y, 26);
                         grad.addColorStop(0, 'rgba(255, 255, 255, 1)');
-                        grad.addColorStop(0.25, this.isBright ? 'rgba(255, 70, 110, 0.85)' : 'rgba(255, 0, 60, 0.8)');
+                        grad.addColorStop(0.25, this.isBright ? 'rgba(255, 80, 120, 0.9)' : 'rgba(255, 0, 60, 0.85)');
                         grad.addColorStop(1, 'rgba(0, 0, 0, 0)');
                         bgCtx.fillStyle = grad;
                         bgCtx.beginPath();
-                        bgCtx.arc(this.x, this.y, 24, 0, Math.PI * 2);
+                        bgCtx.arc(this.x, this.y, 26, 0, Math.PI * 2);
                         bgCtx.fill();
                     }
                 }
@@ -395,29 +395,30 @@
             class CodeLine {
                 constructor(text, index, total) {
                     this.text = text;
-                    this.x = Math.max(12, bgWidth * 0.035);
-                    this.y = (bgHeight * 0.08) + (index / total) * (bgHeight * 0.84);
+                    this.x = Math.max(16, bgWidth * 0.03);
+                    this.y = (bgHeight * 0.06) + (index / total) * (bgHeight * 0.88);
                     // Faster scrolling hacker terminal lines
-                    this.speed = 0.65;
-                    this.alpha = 0.78;
+                    this.speed = 0.7;
+                    this.alpha = 0.92;
                     this.isBright = index > total * 0.48;
                 }
 
                 update() {
                     this.y -= this.speed;
-                    if (this.y < bgHeight * 0.04) {
-                        this.y = bgHeight * 0.94;
+                    if (this.y < bgHeight * 0.03) {
+                        this.y = bgHeight * 0.96;
                     }
                 }
 
                 draw() {
-                    const fontSize = bgWidth < 500 ? 9 : 12;
+                    // Desktop mode par bhi bada aur saaf dikhne ke liye responsive font size
+                    const fontSize = Math.max(13, Math.min(18, Math.floor(bgWidth * 0.015)));
                     bgCtx.font = `bold ${fontSize}px "Share Tech Mono", "Courier New", monospace`;
-                    bgCtx.shadowColor = this.isBright ? 'rgba(255, 40, 85, 0.9)' : 'rgba(0, 255, 120, 0.75)';
-                    bgCtx.shadowBlur = 7;
+                    bgCtx.shadowColor = this.isBright ? 'rgba(255, 40, 85, 0.95)' : 'rgba(0, 255, 120, 0.9)';
+                    bgCtx.shadowBlur = 9;
                     bgCtx.fillStyle = this.isBright
-                        ? `rgba(255, 95, 130, ${this.alpha})`
-                        : `rgba(80, 255, 155, ${this.alpha * 0.85})`;
+                        ? `rgba(255, 110, 140, ${this.alpha})`
+                        : `rgba(90, 255, 165, ${this.alpha})`;
                     bgCtx.fillText(this.text, this.x, this.y);
                     bgCtx.shadowBlur = 0;
                 }
@@ -425,7 +426,8 @@
 
             function initBgElements() {
                 bgParticles = [];
-                const particleCount = bgWidth < 600 ? 70 : 110;
+                // Zyada particles taaki desktop mode par poori screen bhari aur connected dikhe
+                const particleCount = bgWidth < 600 ? 85 : 155;
                 for (let i = 0; i < particleCount; i++) {
                     bgParticles.push(new BgParticle());
                 }
@@ -482,11 +484,12 @@
                     const segProgress = (pulse.progress * (path.length - 1)) % 1;
                     if (path[segIndex + 1]) {
                         const px = path[segIndex][0] + (path[segIndex + 1][0] - path[segIndex][0]) * segProgress;
-                        const py = path[segIndex][1] + (path[segIndex + 1][1] - path[segIndex][1]) * segProgress;
+                        const py = path[segIndex][1] + (path[segIndex + 1][1] - path[segInde
+                                                        x][1]) * segProgress;
 
                         bgCtx.beginPath();
                         bgCtx.arc(px, py, 3.5, 0, Math.PI * 2);
-                                           bgCtx.fillStyle = '#ffffff';
+                        bgCtx.fillStyle = '#ffffff';
                         bgCtx.shadowColor = '#ff003c';
                         bgCtx.shadowBlur = 14;
                         bgCtx.fill();
@@ -537,7 +540,7 @@
             }
 
             function drawConnections() {
-                const maxDist = bgWidth < 600 ? 140 : 210;
+                const maxDist = bgWidth < 600 ? 155 : 245;
 
                 for (let i = 0; i < bgParticles.length; i++) {
                     for (let j = i + 1; j < bgParticles.length; j++) {
@@ -546,18 +549,18 @@
                         const dist = Math.sqrt(dx * dx + dy * dy);
 
                         if (dist < maxDist) {
-                            const opacity = (1 - dist / maxDist) * 0.9;
+                            const opacity = (1 - dist / maxDist) * 0.95;
                             bgCtx.beginPath();
                             bgCtx.moveTo(bgParticles[i].x, bgParticles[i].y);
                             bgCtx.lineTo(bgParticles[j].x, bgParticles[j].y);
 
                             if (bgParticles[i].isBright || bgParticles[j].isBright) {
-                                bgCtx.strokeStyle = `rgba(255, 90, 125, ${opacity})`;
+                                bgCtx.strokeStyle = `rgba(255, 115, 145, ${opacity})`;
                             } else {
-                                bgCtx.strokeStyle = `rgba(255, 0, 60, ${opacity})`;
+                                bgCtx.strokeStyle = `rgba(255, 15, 70, ${opacity})`;
                             }
 
-                            bgCtx.lineWidth = 1.25;
+                            bgCtx.lineWidth = 1.6;
                             bgCtx.stroke();
                         }
                     }
@@ -566,12 +569,12 @@
                         const dxm = bgParticles[i].x - bgMouse.x;
                         const dym = bgParticles[i].y - bgMouse.y;
                         const distM = Math.sqrt(dxm * dxm + dym * dym);
-                        if (distM < 220) {
+                        if (distM < 250) {
                             bgCtx.beginPath();
                             bgCtx.moveTo(bgParticles[i].x, bgParticles[i].y);
                             bgCtx.lineTo(bgMouse.x, bgMouse.y);
-                            bgCtx.strokeStyle = `rgba(255, 160, 180, ${(1 - distM / 220) * 0.95})`;
-                            bgCtx.lineWidth = 1.4;
+                            bgCtx.strokeStyle = `rgba(255, 185, 200, ${(1 - distM / 250) * 1.0})`;
+                            bgCtx.lineWidth = 1.8;
                             bgCtx.stroke();
                         }
                     }
@@ -649,7 +652,8 @@
             });
         }
 
-        function updateCursorAndTrail(x, y) {
+        function updateCursorAndTrail(x, y
+                                      ) {
             mouse.x = x;
             mouse.y = y;
 
