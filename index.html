@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -12,7 +13,7 @@
         :root {
             --neon-red: #ff003c;
             --neon-red-glow: rgba(255, 0, 60, 0.6);
-            --bg-color: #050505;
+            --bg-color: #010614;
         }
 
         * {
@@ -27,10 +28,20 @@
             overflow-x: hidden;
             margin: 0;
             padding: 0;
-            background-image: 
-                linear-gradient(rgba(255, 0, 60, 0.05) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(255, 0, 60, 0.05) 1px, transparent 1px);
-            background-size: 30px 30px;
+        }
+
+        /* ---------------------------------
+           CYBERNETIC TECH BACKGROUND CANVAS
+        --------------------------------- */
+        #cyber-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 0;
+            background: radial-gradient(circle at 38% 28%, #073275 0%, #031333 50%, #010614 100%);
         }
 
         /* ---------------------------------
@@ -59,7 +70,7 @@
         }
 
         /* ---------------------------------
-           SWARM CURSORS (The "so many cursors" effect)
+           SWARM CURSORS
         --------------------------------- */
         .swarm-cursor {
             position: fixed;
@@ -69,7 +80,6 @@
             height: 18px;
             pointer-events: none;
             z-index: 9999;
-            /* Exact classic cursor shape matching the video */
             background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpath fill='%23ff003c' stroke='%23ffffff' stroke-width='1.5' stroke-linejoin='round' d='M4.5 3L18.5 11.5L11 13.5L8.5 21.5L4.5 3Z'/%3E%3C/svg%3E");
             background-repeat: no-repeat;
             background-size: contain;
@@ -97,7 +107,7 @@
         }
 
         /* ---------------------------------
-           CANVAS FOR TRAILS & PARTICLES
+           CANVAS FOR CURSOR TRAILS & PARTICLES
         --------------------------------- */
         #effects-canvas {
             position: fixed;
@@ -106,7 +116,7 @@
             width: 100vw;
             height: 100vh;
             pointer-events: none;
-            z-index: 1; /* Behind content */
+            z-index: 2;
         }
 
         /* ---------------------------------
@@ -123,10 +133,11 @@
         }
 
         .hacker-card {
-            background: rgba(10, 0, 0, 0.8);
+            background: rgba(5, 10, 22, 0.72);
             border: 1px solid var(--neon-red);
-            box-shadow: 0 0 15px rgba(255, 0, 60, 0.3), inset 0 0 20px rgba(255, 0, 60, 0.1);
-            backdrop-filter: blur(5px);
+            box-shadow: 0 0 20px rgba(255, 0, 60, 0.35), inset 0 0 20px rgba(255, 0, 60, 0.12);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
             padding: 2.5rem;
             border-radius: 8px;
             max-width: 600px;
@@ -162,7 +173,7 @@
             padding: 10px 20px;
             color: #fff;
             border: 1px solid var(--neon-red);
-            background: transparent;
+            background: rgba(10, 0, 5, 0.5);
             text-transform: uppercase;
             text-decoration: none;
             font-weight: bold;
@@ -183,7 +194,7 @@
             border-radius: 4px;
             font-size: 0.85rem;
             color: #ddd;
-            background: rgba(255, 0, 60, 0.1);
+            background: rgba(255, 0, 60, 0.12);
             transition: all 0.3s ease;
         }
         
@@ -197,6 +208,9 @@
     </style>
 </head>
 <body>
+
+    <!-- Cybernetic Plexus, Bio Code & Microchip Background -->
+    <canvas id="cyber-bg"></canvas>
 
     <!-- Canvas for smooth trailing light and particles -->
     <canvas id="effects-canvas"></canvas>
@@ -268,7 +282,6 @@
                 </a>
                 <a href="https://x.com/jdzynx" target="_blank" class="glitch-btn interactive">
                     <i class="fab fa-twitter mr-2"></i> Twitter
-            
                 </a>
             </div>
             
@@ -279,242 +292,199 @@
         </div>
     </div>
 
-    <!-- Script for all cursor effects, swarm, canvas trails, and ripples -->
+    <!-- ==========================================================
+         SCRIPT 1: CYBERNETIC PLEXUS, BIO CODE & MICROCHIP BACKGROUND
+    =========================================================== -->
     <script>
-        const cursorDot = document.getElementById('main-cursor-dot');
-        const canvas = document.getElementById('effects-canvas');
-        const ctx = canvas.getContext('2d');
-        const swarmContainer = document.getElementById('swarm-container');
+        (function () {
+            const bgCanvas = document.getElementById('cyber-bg');
+            const bgCtx = bgCanvas.getContext('2d');
 
-        let width, height;
-        let mouse = { x: -100, y: -100 }; // Start offscreen
-        let smoothMouse = { x: -100, y: -100 };
+            let bgWidth, bgHeight;
+            let bgParticles = [];
+            let codeLines = [];
+            let circuitPulses = [];
+            let bgMouse = { x: null, y: null };
 
-        // Config for effects
-        const TRAIL_LENGTH = 20;
-        const trailCoords = [];
-        const particles = [];
-        
-        // Swarm configuration
-        const numSwarm = 30; // Increased for a denser swarm effect like the video
-        const swarmData = [];
+            // Shaikh Javeed (@JD) ke baare mein moving background lines
+            const bioCodeSnippets = [
+                "USER=Shaikh_Javeed  HANDLE=@JD  SYSTEM=ProfileOS",
+                "ROLE: Student & Full-Stack Developer",
+                "LOCATION=Udgir  STATUS=ONLINE",
+                "SKILL_01: Android App Development",
+                "SKILL_02: Modern Web Development",
+                "SKILL_03: Artificial Intelligence & ML",
+                "CORE_ENGINE: Coding & Problem Solving",
+                "PASSION: Technology, Logic & Music",
+                "HOST=https://jdzynx.github.io",
+                "REPO=github.com/jdzynx  BRANCH=main",
+                "DIRECTIVE: Build Smart & Clean Software",
+                "%include 'profile_os.inc'",
+                "load_module android_dev.dll",
+                "load_module web_architecture.dll",
+                "load_module ai_neural_core.dll",
+                "init_workspace --user Shaikh_Javeed",
+                "section .bio use64 class=developer",
+                "..root@jd-universe:~#"
+            ];
 
-        // Resize Canvas
-        function resize() {
-            width = window.innerWidth;
-            height = window.innerHeight;
-            canvas.width = width;
-            canvas.height = height;
-        }
-        window.addEventListener('resize', resize);
-        resize();
-
-        // Initialize Swarm DOM elements
-        for(let i = 0; i < numSwarm; i++) {
-            const el = document.createElement('div');
-            el.classList.add('swarm-cursor');
-            
-            // Add slight opacity variations for depth
-            el.style.opacity = Math.random() * 0.6 + 0.4;
-            
-            swarmContainer.appendChild(el);
-            
-            // Organic Spring Physics parameters for each swarm cursor
-            swarmData.push({
-                element: el,
-                x: window.innerWidth / 2,
-                y: window.innerHeight / 2,
-                vx: 0,
-                vy: 0,
-                // Spring physics for smooth trailing and flocking
-                spring: 0.01 + (Math.random() * 0.04),
-                friction: 0.70 + (Math.random() * 0.20),
-                // Cluster offsets
-                offsetX: (Math.random() * 140) - 70,
-                offsetY: (Math.random() * 140) - 70,
-            });
-        }
-
-        // Handle Move for both Mouse and Finger
-        function updateCursorAndTrail(x, y) {
-            mouse.x = x;
-            mouse.y = y;
-
-            // Move DOM Custom Cursor
-            cursorDot.style.transform = `translate(${mouse.x}px, ${mouse.y}px)`;
-
-            // Add point for trail
-            trailCoords.push({ x: mouse.x, y: mouse.y });
-            if (trailCoords.length > TRAIL_LENGTH) {
-                trailCoords.shift();
+            function resizeBg() {
+                bgWidth = bgCanvas.width = window.innerWidth;
+                bgHeight = bgCanvas.height = window.innerHeight;
+                initBgElements();
             }
 
-            // Create particles on move
-            if (Math.random() > 0.4) {
-                particles.push(new Particle(mouse.x, mouse.y));
-            }
-        }
+            window.addEventListener('resize', resizeBg);
 
-        // Mouse Move Event (Desktop)
-        window.addEventListener('mousemove', (e) => {
-            updateCursorAndTrail(e.clientX, e.clientY);
-        });
-
-        // Touch Events (Mobile Finger Tracking)
-        window.addEventListener('touchmove', (e) => {
-            if (e.touches.length > 0) {
-                updateCursorAndTrail(e.touches[0].clientX, e.touches[0].clientY);
-            }
-        }, { passive: true });
-
-        window.addEventListener('touchstart', (e) => {
-            if (e.touches.length > 0) {
-                updateCursorAndTrail(e.touches[0].clientX, e.touches[0].clientY);
-            }
-        }, { passive: true });
-
-        // Hover Effect on Interactive Elements
-        const interactives = document.querySelectorAll('.interactive, a, button, .tag');
-        interactives.forEach(el => {
-            el.addEventListener('mouseenter', () => cursorDot.classList.add('hovered'));
-            el.addEventListener('mouseleave', () => cursorDot.classList.remove('hovered'));
-        });
-
-        // Click Ripple Effect
-        window.addEventListener('click', (e) => {
-            // Only show ripple if clicking on body/empty space, or make it universal
-            const ripple = document.createElement('div');
-            ripple.classList.add('ripple');
-            ripple.style.left = `${e.clientX}px`;
-            ripple.style.top = `${e.clientY}px`;
-            document.body.appendChild(ripple);
-
-            // Create explosion particles
-            for(let i=0; i<15; i++) {
-                particles.push(new Particle(e.clientX, e.clientY, true));
-            }
-
-            setTimeout(() => {
-                ripple.remove();
-            }, 600);
-        });
-
-        // Particle Class
-        class Particle {
-            constructor(x, y, isExplosion = false) {
-                this.x = x;
-                this.y = y;
-                this.size = Math.random() * 2 + 1;
-                
-                if (isExplosion) {
-                    const angle = Math.random() * Math.PI * 2;
-                    const speed = Math.random() * 5 + 2;
-                    this.vx = Math.cos(angle) * speed;
-                    this.vy = Math.sin(angle) * speed;
-                    this.life = 1;
-                    this.decay = Math.random() * 0.03 + 0.02;
-                } else {
-                    this.vx = (Math.random() - 0.5) * 2;
-                    this.vy = (Math.random() - 0.5) * 2 + 1; // Fall slightly down
-                    this.life = 1;
-                    this.decay = Math.random() * 0.02 + 0.01;
-                }
-                this.color = `rgba(255, 0, 60, ${this.life})`;
-            }
-            update() {
-                this.x += this.vx;
-                this.y += this.vy;
-                this.life -= this.decay;
-                this.color = `rgba(255, 0, 60, ${this.life})`;
-            }
-            draw(ctx) {
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                ctx.fillStyle = this.color;
-                ctx.fill();
-            }
-        }
-
-        // Main Animation Loop
-        function animate() {
-            // Clear Canvas
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-            // 1. Draw Light Trail (Canvas)
-            if (trailCoords.length > 1) {
-                ctx.beginPath();
-                ctx.moveTo(trailCoords[0].x, trailCoords[0].y);
-                for (let i = 1; i < trailCoords.length; i++) {
-                    // Smooth curve
-                    const xc = (trailCoords[i].x + trailCoords[i-1].x) / 2;
-                    const yc = (trailCoords[i].y + trailCoords[i-1].y) / 2;
-                    ctx.quadraticCurveTo(trailCoords[i-1].x, trailCoords[i-1].y, xc, yc);
-                }
-                ctx.lineTo(trailCoords[trailCoords.length-1].x, trailCoords[trailCoords.length-1].y);
-                
-                // Trail styling
-                ctx.strokeStyle = 'rgba(255, 0, 60, 0.4)';
-                ctx.lineWidth = 4;
-                ctx.lineCap = 'round';
-                ctx.lineJoin = 'round';
-                ctx.shadowBlur = 10;
-                ctx.shadowColor = '#ff003c';
-                ctx.stroke();
-                ctx.shadowBlur = 0; // Reset shadow for next drawings
-                
-                // Shrink trail slowly if mouse stops
-                trailCoords.shift();
-            }
-
-            // 2. Update & Draw Particles (Canvas)
-            for (let i = particles.length - 1; i >= 0; i--) {
-                particles[i].update();
-                if (particles[i].life <= 0) {
-                    particles.splice(i, 1);
-                } else {
-                    particles[i].draw(ctx);
-                }
-            }
-
-            // 3. Update Swarm Cursors (DOM) - "So many cursors" effect
-            // Using Spring Physics for organic flocking/swarming like the video
-            
-            // Dynamic mouse offset that shifts slowly over time to make the swarm "breathe"
-            const time = Date.now() * 0.002;
-
-            swarmData.forEach((s, index) => {
-                // Breathing offset (orbiting effect)
-                let currentOffsetX = s.offsetX + Math.cos(time + index) * 30;
-                let currentOffsetY = s.offsetY + Math.sin(time + index) * 30;
-
-                // Calculate target position for this specific swarm cursor
-                let targetX = mouse.x + currentOffsetX;
-                let targetY = mouse.y + currentOffsetY;
-
-                // Spring physics calculations
-                let dx = targetX - s.x;
-                let dy = targetY - s.y;
-                
-                s.vx += dx * s.spring;
-                s.vy += dy * s.spring;
-                
-                // Apply friction
-                s.vx *= s.friction;
-                s.vy *= s.friction;
-                
-                s.x += s.vx;
-                s.y += s.vy;
-
-                // Apply transform
-                s.element.style.transform = `translate(${s.x}px, ${s.y}px)`;
+            window.addEventListener('mousemove', (e) => {
+                bgMouse.x = e.clientX;
+                bgMouse.y = e.clientY;
             });
 
-            requestAnimationFrame(animate);
-        }
+            window.addEventListener('touchmove', (e) => {
+                if (e.touches && e.touches[0]) {
+                    bgMouse.x = e.touches[0].clientX;
+                    bgMouse.y = e.touches[0].clientY;
+                }
+            }, { passive: true });
 
-        // Start animation loop
-        animate();
+            window.addEventListener('mouseout', () => {
+                bgMouse.x = null;
+                bgMouse.y = null;
+            });
 
-    </script>
-</body>
-</html>
+            class BgParticle {
+                constructor() {
+                    const bias = Math.random();
+                    this.x = bias < 0.72 ? Math.random() * (bgWidth * 0.65) : Math.random() * bgWidth;
+                    this.y = Math.random() * bgHeight;
+                    this.vx = (Math.random() - 0.5) * 0.65;
+                    this.vy = (Math.random() - 0.5) * 0.65;
+                    this.radius = Math.random() * 2.2 + 1.4;
+                    this.isGold = (this.x < bgWidth * 0.55 && this.y > bgHeight * 0.42 && Math.random() > 0.35);
+                    this.flare = Math.random() > 0.88;
+                }
+
+                update() {
+                    this.x += this.vx;
+                    this.y += this.vy;
+                    if (this.x < -30 || this.x > bgWidth + 30) this.vx *= -1;
+                    if (this.y < -30 || this.y > bgHeight + 30) this.vy *= -1;
+                }
+
+                draw() {
+                    bgCtx.beginPath();
+                    bgCtx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                    bgCtx.fillStyle = this.isGold ? '#ffcf70' : '#7ae2ff';
+                    bgCtx.fill();
+
+                    if (this.flare) {
+                        const grad = bgCtx.createRadialGradient(this.x, this.y, 0, this.x, this.y, 22);
+                        grad.addColorStop(0, 'rgba(255, 255, 255, 1)');
+                        grad.addColorStop(0.25, this.isGold ? 'rgba(255, 175, 55, 0.75)' : 'rgba(0, 210, 255, 0.75)');
+                        grad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+                        bgCtx.fillStyle = grad;
+                        bgCtx.beginPath();
+                        bgCtx.arc(this.x, this.y, 22, 0, Math.PI * 2);
+                        bgCtx.fill();
+                    }
+                }
+            }
+
+            class CodeLine {
+                constructor(text, index, total) {
+                    this.text = text;
+                    this.x = Math.max(12, bgWidth * 0.035);
+                    this.y = (bgHeight * 0.08) + (index / total) * (bgHeight * 0.84);
+                    this.speed = 0.22;
+                    this.alpha = 0.72;
+                    this.isGold = index > total * 0.48;
+                }
+
+                update() {
+                    this.y -= this.speed;
+                    if (this.y < bgHeight * 0.04) {
+                        this.y = bgHeight * 0.94;
+                    }
+                }
+
+                draw() {
+                    const fontSize = bgWidth < 500 ? 9 : 12;
+                    bgCtx.font = `bold ${fontSize}px "Courier New", monospace`;
+                    bgCtx.shadowColor = this.isGold ? 'rgba(255, 150, 30, 0.8)' : 'rgba(0, 200, 255, 0.8)';
+                    bgCtx.shadowBlur = 6;
+                    bgCtx.fillStyle = this.isGold
+                        ? `rgba(255, 195, 95, ${this.alpha})`
+                        : `rgba(140, 230, 255, ${this.alpha})`;
+                    bgCtx.fillText(this.text, this.x, this.y);
+                    bgCtx.shadowBlur = 0;
+                }
+            }
+
+            function initBgElements() {
+                bgParticles = [];
+                const particleCount = bgWidth < 600 ? 60 : 95;
+                for (let i = 0; i < particleCount; i++) {
+                    bgParticles.push(new BgParticle());
+                }
+
+                codeLines = [];
+                bioCodeSnippets.forEach((line, idx) => {
+                    codeLines.push(new CodeLine(line, idx, bioCodeSnippets.length));
+                });
+
+                circuitPulses = [
+                    { progress: 0, speed: 0.009 },
+                    { progress: 0.35, speed: 0.007 },
+                    { progress: 0.7, speed: 0.01 }
+                ];
+            }
+
+            function drawMicrochip(time) {
+                const isMobile = bgWidth < 600;
+                const chipSize = isMobile ? bgWidth * 0.22 : Math.min(bgWidth, bgHeight) * 0.17;
+                const chipX = bgWidth - chipSize * 0.78;
+                const chipY = bgHeight * 0.56 - chipSize / 2;
+                const scale = isMobile ? 0.52 : 1;
+
+                bgCtx.save();
+
+                const traces = [
+                    [ [chipX, chipY + chipSize * 0.2], [chipX - 75 * scale, chipY + chipSize * 0.2], [chipX - 115 * scale, chipY - 30 * scale], [chipX - 185 * scale, chipY - 30 * scale] ],
+                    [ [chipX, chipY + chipSize * 0.4], [chipX - 95 * scale, chipY + chipSize * 0.4], [chipX - 145 * scale, chipY + 10 * scale] ],
+                    [ [chipX, chipY + chipSize * 0.6], [chipX - 80 * scale, chipY + chipSize * 0.6], [chipX - 135 * scale, chipY + chipSize * 0.95], [chipX - 195 * scale, chipY + chipSize * 0.95] ],
+                    [ [chipX, chipY + chipSize * 0.8], [chipX - 65 * scale, chipY + chipSize * 0.8], [chipX - 105 * scale, chipY + chipSize * 1.25] ],
+                    [ [chipX + chipSize * 0.25, chipY], [chipX + chipSize * 0.25, chipY - 65 * scale], [chipX - 25 * scale, chipY - 115 * scale] ],
+                    [ [chipX + chipSize * 0.25, chipY + chipSize], [chipX + chipSize * 0.25, chipY + chipSize + 65 * scale], [chipX - 30 * scale, chipY + chipSize + 115 * scale] ]
+                ];
+
+                traces.forEach((path, idx) => {
+                    bgCtx.beginPath();
+                    bgCtx.moveTo(path[0][0], path[0][1]);
+                    for (let i = 1; i < path.length; i++) {
+                        bgCtx.lineTo(path[i][0], path[i][1]);
+                    }
+                    bgCtx.strokeStyle = 'rgba(255, 160, 60, 0.65)';
+                    bgCtx.lineWidth = isMobile ? 1.5 : 2.2;
+                    bgCtx.stroke();
+
+                    const lastPt = path[path.length - 1];
+                    bgCtx.beginPath();
+                    bgCtx.arc(lastPt[0], lastPt[1], isMobile ? 2.5 : 4, 0, Math.PI * 2);
+                    bgCtx.fillStyle = '#ffbe6b';
+                    bgCtx.fill();
+
+                    const pulse = circuitPulses[idx % circuitPulses.length];
+                    const segIndex = Math.floor(pulse.progress * (path.length - 1));
+                    const segProgress = (pulse.progress * (path.length - 1)) % 1;
+                    if (path[segIndex + 1]) {
+                        const px = path[segIndex][0] + (path[segIndex + 1][0] - path[segIndex][0]) * segProgress;
+                        const py = path[segIndex][1] + (path[segIndex + 1][1] - path[segIndex][1]) * segProgress;
+
+                        bgCtx.beginPath();
+                        bgCtx.arc(px, py, 3.2, 0, Math.PI * 2);
+                        bgCtx.fillStyle = '#ffffff';
+                        bgCtx.shadowColor = '#ffaa33';
+                        bgCtx.shadowBlur = 12;
+                        bgCtx.fill();
+                       
